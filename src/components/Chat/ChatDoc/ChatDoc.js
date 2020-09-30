@@ -37,12 +37,6 @@ export default function ChatDoc({ classes, setStep, smallScreen }) {
         <Box height="1rem"></Box>
 
         <Box p="0 0 0 1rem" display="flex">
-          <Typography
-            style={{ color: "#949DB1", cursor: "pointer" }}
-            variant="subtitle1"
-          >
-            View statement of claim
-          </Typography>
           <Box width="0.4rem"></Box>
 
           <Box justifySelf="flex-end">
