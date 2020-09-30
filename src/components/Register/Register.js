@@ -16,7 +16,8 @@ import Container from "@material-ui/core/Container";
 import { useHistory } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { authContext } from "../../contexts";
+import { registerUser } from "slices/authSlice";
+import { useDispatch } from "react-redux";
 
 function Copyright() {
   return (
@@ -67,8 +68,7 @@ const useStyles = makeStyles((theme) => ({
 const Register = () => {
   let history = useHistory();
   const classes = useStyles();
-  const { registerUser } = useContext(authContext);
-
+  const dispatch = useDispatch();
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -77,7 +77,7 @@ const Register = () => {
     validationSchema: RegisterSchema,
     onSubmit: async (values) => {
       let { email, pass, username, name } = values;
-      await registerUser({ email, pass, username, name });
+      await dispatch(registerUser({ email, pass, username, name }));
       history.push("/login");
     },
   });

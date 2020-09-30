@@ -3,8 +3,7 @@ import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
+
 import { Link } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
@@ -16,7 +15,8 @@ import Container from "@material-ui/core/Container";
 import { useHistory } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { authContext } from "contexts";
+import { loginUser } from "slices/authSlice";
+import { useDispatch } from "react-redux";
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Email Required"),
@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
 const Login = () => {
   let history = useHistory();
   const classes = useStyles();
-  const { loginUser, isAuthenticated } = useContext(authContext);
+  const dispatch = useDispatch();
 
   const formik = useFormik({
     initialValues: {
@@ -63,7 +63,7 @@ const Login = () => {
     onSubmit: async (values) => {
       let { email, password } = values;
       console.log(values);
-      await loginUser({ email, password });
+      await dispatch(loginUser({ email, password }));
       history.push("/");
     },
   });

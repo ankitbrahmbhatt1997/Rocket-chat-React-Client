@@ -4,7 +4,9 @@ import Home from "./components/Home";
 import Register from "./components/Register";
 import Login from "./components/Login";
 import Fallback from "./components/Fallback";
-import { authContext } from "contexts";
+import { useSelector, useDispatch, shallowEqual } from "react-redux";
+import { getUser } from "slices/authSlice";
+
 import {
   BrowserRouter as Router,
   Switch,
@@ -13,14 +15,17 @@ import {
 } from "react-router-dom";
 
 export default function Routes() {
-  const { isAuthenticated, getUser, user } = React.useContext(authContext);
+  const dispatch = useDispatch();
+  const { isAuthenticated, user } = useSelector(
+    (state) => state.auth,
+    shallowEqual
+  );
 
   React.useEffect(() => {
     if (isAuthenticated && Object.keys(user).length === 0) {
-      getUser();
+      dispatch(getUser());
     }
   }, []);
-
   return (
     <Router>
       <Switch>
@@ -45,7 +50,7 @@ export default function Routes() {
 }
 
 function GuestRoute({ children, ...rest }) {
-  const { isAuthenticated } = React.useContext(authContext);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   return (
     <Route
       {...rest}
@@ -66,8 +71,9 @@ function GuestRoute({ children, ...rest }) {
 }
 
 function PrivateRoute({ children, ...rest }) {
-  const { isAuthenticated } = React.useContext(authContext);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   console.log(isAuthenticated);
+
   return (
     <Route
       {...rest}

@@ -1,50 +1,42 @@
 import React from "react";
-import { Box, Typography, makeStyles } from "@material-ui/core";
-import Avatar from "@material-ui/core/Avatar";
-import grey from "@material-ui/core/colors/grey";
-import { authContext } from "contexts";
-
-const MessageTemplate = ({ content }) => {
-  return (
-    <Box display="flex" justifyContent="flex-end" m="2rem 0">
-      <Box
-        bgcolor="primary.main"
-        color="#fff"
-        style={{ borderRadius: "1rem 1rem 0 1rem" }}
-        p="0.7rem"
-      >
-        <Typography variant="subtitle1">{content}</Typography>
-      </Box>
-    </Box>
-  );
-};
+import SentMessage from "components/Chat/SentMessage";
+import RecievedMessage from "components/Chat/RecievedMessage";
+import DocTemplate from "components/Chat/DocTemplate";
+import { useSelector } from "react-redux";
 
 export default function Message({
   message: {
     msg: content,
     u: { username: from },
+    file,
+    attachments,
+    ts,
   },
+  domId,
 }) {
-  let {
-    user: { username },
-  } = React.useContext(authContext);
+  const username = useSelector((state) => state.auth.user.username);
+
   return (
     <React.Fragment>
       {username === from ? (
-        <MessageTemplate content={content} />
+        file ? (
+          <DocTemplate file={attachments[0]} domId={domId} />
+        ) : (
+          <SentMessage content={content} domId={domId} />
+        )
+      ) : file ? (
+        <DocTemplate
+          file={attachments[0]}
+          position="flex-start"
+          from={from}
+          domId={domId}
+        />
       ) : (
-        <Box display="flex" alignItems="flex-start" m="2rem 0">
-          <Avatar>{from[0]}</Avatar>
-          <Box width="1rem"></Box>
-          <Box
-            p="0.7rem"
-            bgcolor={grey[200]}
-            style={{ borderRadius: "1rem 1rem 1rem 0" }}
-          >
-            <Typography variant="subtitle1">{content}</Typography>
-          </Box>
-        </Box>
+        <RecievedMessage content={content} from={from} domId={domId} />
       )}
     </React.Fragment>
   );
 }
+
+// domId={domId}
+// domId={domId}

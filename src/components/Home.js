@@ -1,9 +1,10 @@
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
-import { authContext } from "contexts";
+import { useDispatch } from "react-redux";
+import { logoutUser } from "slices/authSlice";
 
 export default function Home() {
-  let { logoutUser, isAuthenticated } = useContext(authContext);
+  const dispatch = useDispatch();
   return (
     <React.Fragment>
       <div>
@@ -14,7 +15,7 @@ export default function Home() {
         <a
           style={{ cursor: "pointer" }}
           onClick={() => {
-            logoutUser();
+            dispatch(logoutUser());
           }}
         >
           Click to logout

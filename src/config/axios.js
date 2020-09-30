@@ -1,7 +1,9 @@
 import axios from "axios";
 import { getAuthToken } from "utils/localStorage";
 
-const baseUrl = `http://192.168.153.128:3000/api/v1`;
+export const baseUrl = `http://192.168.153.128:3000`;
+
+export const vchost = "vc.webnyay.in";
 
 const { token, userId } = getAuthToken();
 let headers;
@@ -16,7 +18,7 @@ if (token) {
 
 const instance = axios.create({
   baseURL: baseUrl,
-  timeout: 3000,
+  timeout: 10000,
   headers,
 });
 

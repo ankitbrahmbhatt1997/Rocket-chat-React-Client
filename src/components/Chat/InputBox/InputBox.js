@@ -5,13 +5,30 @@ import {
   Button,
   IconButton,
   makeStyles,
+  useTheme,
+  Icon,
 } from "@material-ui/core";
-import SendIcon from "@material-ui/icons/Send";
-import AttachFileIcon from "@material-ui/icons/AttachFile";
+import { sendMessage } from "utils/chatUtils";
+import { containerContext } from "components/Chat/ChatContainer";
+
 import { DropzoneDialog } from "material-ui-dropzone";
-import { groupContext } from "contexts";
+import { typingIndicator } from "utils/chatUtils";
+import { useDispatch } from "react-redux";
+import { uploadFile } from "slices/groupSlice";
+import { useSelector } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
+  icon: {
+    fontSize: "2.5rem",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    background: theme.palette.secondPrimary,
+  },
+
+  container: {
+    borderTop: `0.2rem solid ${theme.palette.border}`,
+    paddingTop: "0.5rem",
+  },
   root: {
     background: "#fff",
     padding: "1rem .5rem",
@@ -29,11 +46,30 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function InputBox({ sendMessage, groupId }) {
+export default function InputBox({ groupId }) {
+  const dispatch = useDispatch();
   const [message, setMessage] = useState("");
   const [open, setOpen] = useState("");
-  const { uploadFile } = useContext(groupContext);
+  const { ws } = useContext(containerContext);
+
+  const username = useSelector((state) => state.auth.user.username);
   const classes = useStyles();
+  const theme = useTheme();
+
+  let timer,
+    timeoutVal = 1000;
+
+  const onKeyUp = () => {
+    window.clearTimeout(timer); // prevent errant multiple timeouts from being generated
+    timer = window.setTimeout(() => {
+      typingIndicator(ws, groupId, username, false);
+    }, timeoutVal);
+  };
+
+  const onKeyPress = () => {
+    window.clearTimeout(timer);
+    typingIndicator(ws, groupId, username, true);
+  };
 
   const onUploadClick = () => {
     setOpen(true);
@@ -43,34 +79,31 @@ export default function InputBox({ sendMessage, groupId }) {
     setMessage(e.target.value);
   };
   const onSendClick = () => {
-    sendMessage(message, groupId);
+    sendMessage(ws, message, groupId);
     setMessage("");
   };
   return (
     <React.Fragment>
-      <Box display="flex">
+      <Box display="flex" className={classes.container}>
         <IconButton onClick={onUploadClick}>
-          <AttachFileIcon />
+          <Icon className={classes.icon}>add_circle</Icon>
         </IconButton>
         <Box flexGrow={1}>
           <TextField
             style={{ width: "100%", borderRadius: "1rem" }}
             id="filled-basic"
             variant="filled"
-            placeholder="type a message"
+            placeholder="Type a message here"
             inputProps={{ className: classes.root }}
             value={message}
             onChange={onChange}
+            onKeyUp={onKeyUp}
+            onKeyPress={onKeyPress}
           />
         </Box>
-        <Button
-          variant="contained"
-          color="primary"
-          endIcon={<SendIcon />}
-          onClick={onSendClick}
-        >
-          Send
-        </Button>
+        <IconButton onClick={onSendClick}>
+          <Icon className={classes.icon}>send_Circle</Icon>
+        </IconButton>
       </Box>
       <DropzoneDialog
         cancelButtonText={"cancel"}
@@ -82,7 +115,7 @@ export default function InputBox({ sendMessage, groupId }) {
         }}
         onSave={async (files) => {
           console.log("Files:", files);
-          uploadFile({ file: files[0], groupId });
+          dispatch(uploadFile({ file: files[0], groupId }));
           setOpen(false);
         }}
         showPreviews={true}
