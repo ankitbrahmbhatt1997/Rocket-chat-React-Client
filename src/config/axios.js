@@ -1,9 +1,9 @@
 import axios from "axios";
 import { getAuthToken } from "utils/localStorage";
 
-export const baseUrl = `http://192.168.153.128:3000`;
+export const baseUrl = `http://localhost:3000`;
 
-export const vchost = "vc.webnyay.in";
+export const vchost = "your vc server link";
 
 const { token, userId } = getAuthToken();
 let headers;

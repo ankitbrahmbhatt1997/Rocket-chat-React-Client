@@ -28,7 +28,7 @@ export default function ChatContainer() {
   const messageContainer = React.useRef(null);
 
   const { connected, ws } = useWebsocket(
-    `ws://192.168.153.128:3000/websocket`,
+    `ws://localhost:3000/websocket`,
     messageContainer
   );
 
