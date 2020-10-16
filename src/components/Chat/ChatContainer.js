@@ -1,24 +1,21 @@
-import React, {
-  useContext,
-  useEffect,
-  useRef,
-  createContext,
-  useState,
-  Fragment,
-} from "react";
-import Chat from "./Chat";
-import { getAllGroups } from "slices/groupSlice";
-import { useSelector, useDispatch } from "react-redux";
-import isEmpty from "lodash/isEmpty";
-
-import { getWindowDimension } from "utils/responsiveUtils";
+import { useMediaQuery, useTheme } from "@material-ui/core";
 import { useWebsocket } from "hooks";
+import isEmpty from "lodash/isEmpty";
+import React, { createContext, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllGroups } from "slices/groupSlice";
+import Chat from "./Chat";
 
 // context for ws and container ref
 export const containerContext = createContext(null);
 
 export default function ChatContainer() {
   const dispatch = useDispatch();
+  const { Provider: ChatProvider } = containerContext;
+
+  // small screen logic
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   const { groups } = useSelector((state) => state.groups);
 
@@ -32,29 +29,23 @@ export default function ChatContainer() {
     messageContainer
   );
 
-  // responsive screen logic
-  const { height, width } = getWindowDimension();
-  const [screenWidth, setWidth] = useState(width);
-
-  const handleResize = () => {
-    const { height, width } = getWindowDimension();
-    setWidth(width);
-  };
-
   useEffect(() => {
     dispatch(getAllGroups());
-    window.addEventListener("resize", handleResize);
   }, []);
 
+  const chatProps = {
+    showVC,
+    setShowVC,
+    isSmallScreen,
+  };
+
+  if (!connected) return <h1>Not connnected yet</h1>;
+
+  if (isEmpty(groups)) return <h1>No groups....dah!</h1>;
+
   return (
-    <containerContext.Provider
-      value={{ messageContainer, ws, showVC, setShowVC }}
-    >
-      {!isEmpty(groups) && connected ? (
-        <Chat screenWidth={screenWidth} showVC={showVC} setShowVC={setShowVC} />
-      ) : (
-        <h1>No groups....dah!</h1>
-      )}
-    </containerContext.Provider>
+    <ChatProvider value={{ messageContainer, ws, showVC, setShowVC }}>
+      <Chat {...chatProps} />
+    </ChatProvider>
   );
 }

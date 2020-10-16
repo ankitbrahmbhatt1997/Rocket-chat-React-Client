@@ -1,16 +1,13 @@
-import React, { useContext } from "react";
-import List from "@material-ui/core/List";
-import Typography from "@material-ui/core/Typography";
-import Divider from "@material-ui/core/Divider";
-import ListItem from "@material-ui/core/ListItem";
-import Drawer from "@material-ui/core/Drawer";
 import { Box } from "@material-ui/core";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
-import { useSelector } from "react-redux";
-import GroupDisplay from "components/Chat/GroupDisplay";
+import Divider from "@material-ui/core/Divider";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import { useTheme } from "@material-ui/core/styles";
+import Typography from "@material-ui/core/Typography";
 import classNames from "classnames";
-
-import ListItemText from "@material-ui/core/ListItemText";
+import GroupDisplay from "components/Chat/GroupDisplay";
+import React from "react";
+import { useSelector } from "react-redux";
 
 const renderGroups = (groups, classes, selected, setSelected, setStep) => {
   return groups.map((group, index) => {

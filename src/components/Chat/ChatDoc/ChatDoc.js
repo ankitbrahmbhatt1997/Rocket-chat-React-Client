@@ -1,15 +1,25 @@
-import React from "react";
-import { Box, Typography, Divider, IconButton } from "@material-ui/core";
-import ActiveUsers from "components/Chat/ActiveUsers";
-import Scheduler from "components/Chat/Scheduler";
-import Search from "components/Chat/Search";
+import { Box, Divider, IconButton } from "@material-ui/core";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
-import VisibilityIcon from "@material-ui/icons/Visibility";
+import Search from "components/Chat/Search";
+import React from "react";
+import FilesModal from "components/Chat/ChatDoc/FilesModal";
+import Files from "components/Chat/ChatDoc/Files";
 
-export default function ChatDoc({ classes, setStep, smallScreen }) {
+export default function ChatDoc({
+  classes,
+  setStep,
+  smallScreen,
+  handleFileModalOpen,
+  fileModalOpen,
+  handleFileModalClose,
+}) {
   return (
-    <Box p="0 0.5rem" className={classes.rightDoc}>
-      <Box m="4rem 0 0 0" textAlign="center">
+    <Box className={classes.rightDoc}>
+      <Box m="0 0 0 0" textAlign="center">
+        {/* //TODO group creating and other options in place of this box */}
+        <Box height="5rem"></Box>
+        <Divider />
+
         <Box display="flex" justifyContent="flex-start">
           {" "}
           {smallScreen && (
@@ -22,27 +32,16 @@ export default function ChatDoc({ classes, setStep, smallScreen }) {
             </IconButton>
           )}
         </Box>
-        <ActiveUsers />
-        <Box height="0.6rem"></Box>
-        <Typography variant="caption">Active Users</Typography>
-        <Box height="2rem"></Box>
-        <Divider />
 
         <Search setStep={setStep} smallScreen={smallScreen} />
         <Divider />
-        <Box height="1rem"></Box>
-        <Scheduler />
-        <Box height="1rem"></Box>
-        <Divider />
-        <Box height="1rem"></Box>
+        <Box height="4rem"></Box>
+        <Files
+          handleOpen={handleFileModalOpen}
+          // filterAudioFiles={filterAudioFiles}
+        />
 
-        <Box p="0 0 0 1rem" display="flex">
-          <Box width="0.4rem"></Box>
-
-          <Box justifySelf="flex-end">
-            <VisibilityIcon />
-          </Box>
-        </Box>
+        <FilesModal open={fileModalOpen} handleClose={handleFileModalClose} />
       </Box>
     </Box>
   );

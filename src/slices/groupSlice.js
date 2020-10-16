@@ -13,6 +13,7 @@ export const initialState = {
   groups: [],
   activeGroup: "",
   members: {},
+  files: [],
 };
 
 const groupSlice = createSlice({
@@ -33,6 +34,9 @@ const groupSlice = createSlice({
     },
     setActive: (state, { payload }) => {
       state.activeGroup = payload;
+    },
+    setFiles: (state, { payload }) => {
+      state.files = payload;
     },
   },
 });
@@ -119,12 +123,28 @@ export const uploadFile = (data) => {
   };
 };
 
+export const getFiles = (groupId) => {
+  return async (dispatch) => {
+    try {
+      let response = await axios({
+        method: "get",
+        url: "/api/v1/groups.files",
+        params: { roomId: groupId, sort: { uploadedAt: -1 } },
+      });
+      dispatch(setFiles(response.data.files));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+};
+
 export const {
   setProgress,
   setGroups,
   setError,
   setActive,
   setMembers,
+  setFiles,
 } = groupSlice.actions;
 
 export default groupSlice.reducer;

@@ -1,28 +1,19 @@
-import React, {
-  useContext,
-  useEffect,
-  useState,
-  useRef,
-  useReducer,
-} from "react";
-import ChatBody from "./ChatBody";
-import { Box } from "@material-ui/core";
-import { CircularProgress } from "@material-ui/core";
 import { containerContext } from "components/Chat/ChatContainer";
+import isEmpty from "lodash/isEmpty";
+import React, { useContext, useEffect, useRef } from "react";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { setAnchorMessage } from "slices/chatSlice";
 import { fetchMembers, setActive } from "slices/groupSlice";
-import isEmpty from "lodash/isEmpty";
-
-import { useSelector, shallowEqual, useDispatch } from "react-redux";
 import {
   fetchHistory,
-  subscribeToRoom,
-  unsubscribeToRoom,
-  subscribeUserStatus,
-  typingIndicatorSub,
   scrollToLast,
   scrollToMessage,
+  subscribeToRoom,
+  typingIndicatorSub,
+  unsubscribeToRoom,
 } from "utils/chatUtils";
+import ChatBody from "./ChatBody";
+
 // import isEmpty from "lodash/isEmpty";
 
 export default function ChatBodyContainer({

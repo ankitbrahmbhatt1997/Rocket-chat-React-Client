@@ -1,13 +1,9 @@
-import React, { useState, Fragment } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import { Box, Collapse } from "@material-ui/core";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import ChatSideBar from "components/Chat/ChatSidebar";
+import { makeStyles } from "@material-ui/core/styles";
 import ChatBody from "components/Chat/ChatBody";
 import ChatDoc from "components/Chat/ChatDoc";
-import blue from "@material-ui/core/colors/blue";
-import { Transition } from "react-transition-group";
-import Vc from "components/Chat/Vc";
+import ChatSideBar from "components/Chat/ChatSidebar";
+import React, { Fragment, useState } from "react";
 
 const drawerWidth = 300;
 const docWidth = 300;
@@ -18,24 +14,15 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     height: "100vh",
     borderRadius: "1rem",
-    flexDirection: (props) => (props.smallScreen ? "column" : "row"),
+    flexDirection: (props) => (props.isSmallScreen ? "column" : "row"),
   },
-  // (props) => (props.smallScreen ? "block" : "flex"),
   drawer: {
-    width: (props) => (props.smallScreen ? "100%" : drawerWidth),
+    width: (props) => (props.isSmallScreen ? "100%" : drawerWidth),
     borderRight: `0.1rem solid ${theme.palette.border}`,
     height: "100%",
+    overflow: "scroll",
   },
-  // selected: {
-  //   background: blue["700"],
-  // },
-  // item: {
-  //   "&:hover": {
-  //     background: blue["700"],
-  //   },
-  // },
-  //   // necessary for content to be below app bar
-  //   toolbar: theme.mixins.toolbar,
+
   content: {
     flexGrow: 1,
     padding: "0",
@@ -45,110 +32,174 @@ const useStyles = makeStyles((theme) => ({
     borderLeft: `0.1rem solid ${theme.palette.border}`,
     height: "100%",
     minWidth: 300,
-    width: (props) => (props.smallScreen ? "100%" : 300),
+    width: (props) => (props.isSmallScreen ? "100%" : 300),
+    overflow: "scroll",
   },
 }));
 
-// const defaultStyle = {
-//   transition: `width 300ms ease-in-out`,
-//   width: 0,
-//   overflow: "hidden",
-// };
-const isSmallScreen = (width) => {
-  return width < 1000;
+const getMobileStepContent = (
+  step,
+  classes,
+  selected,
+  setSelected,
+  setStep,
+  isSmallScreen,
+  openDoc
+) => {
+  switch (step) {
+    case 0:
+      return (
+        <ChatSideBar
+          classes={classes}
+          selected={selected}
+          setSelected={setSelected}
+          setStep={setStep}
+        />
+      );
+    case 1:
+      return (
+        <ChatBody
+          selected={selected}
+          classes={classes}
+          rightDocOpen={openDoc}
+          smallScreen={isSmallScreen}
+          setStep={setStep}
+        />
+      );
+    case 2:
+      return (
+        <ChatDoc
+          classes={classes}
+          setStep={setStep}
+          selected={selected}
+          smallScreen={isSmallScreen}
+        />
+      );
+  }
 };
 
-// const transitionStyles = {
-//   entering: { width: 300, opacity: 0.5 },
-//   entered: { width: 300, opacity: 1 },
-//   exiting: { width: 0, opacity: 0 },
-//   exited: { width: 0, opacity: 0 },
-// };
+const DesktopChat = ({
+  classes,
+  selected,
+  setSelected,
+  setStep,
+  openDoc,
+  isSmallScreen,
+}) => {
+  return (
+    <Fragment>
+      <ChatSideBar
+        classes={classes}
+        selected={selected}
+        setSelected={setSelected}
+        setStep={setStep}
+      />
+      <ChatBody
+        selected={selected}
+        classes={classes}
+        rightDocOpen={openDoc}
+        smallScreen={isSmallScreen}
+        setStep={setStep}
+      />
+      <ChatDoc
+        classes={classes}
+        setStep={setStep}
+        selected={selected}
+        smallScreen={isSmallScreen}
+      />
+    </Fragment>
+  );
+};
 
-export default function Chat({ screenWidth, showVC }) {
-  const [selected, setSelected] = useState(0);
+const MobileChat = ({
+  step,
+  classes,
+  selected,
+  setSelected,
+  setStep,
+  screenWidth,
+  openDoc,
+}) => {
+  return (
+    <Fragment>
+      {getMobileStepContent(
+        step,
+        classes,
+        selected,
+        setSelected,
+        setStep,
+        screenWidth,
+        openDoc
+      )}
+    </Fragment>
+  );
+};
+
+{
+}
+
+export default function Chat({ isSmallScreen }) {
   const [docOpen, setOpen] = useState(true);
   const [step, setStep] = useState(0);
+  const [selected, setSelected] = useState(0);
   const classes = useStyles({
     docOpen,
-    smallScreen: isSmallScreen(screenWidth),
+    isSmallScreen,
   });
 
   const openDoc = () => {
     setOpen((prevState) => !prevState);
   };
 
+  const childProps = {
+    step,
+    classes,
+    selected,
+    setSelected,
+    setStep,
+    openDoc,
+    isSmallScreen,
+  };
+
+  let VisibleChat;
+
+  if (isSmallScreen) {
+    VisibleChat = <MobileChat {...childProps} />;
+  } else {
+    VisibleChat = <DesktopChat {...childProps} />;
+  }
+
   return (
     <div className={classes.root}>
       <CssBaseline />
-      {!showVC ? (
-        <Fragment>
-          {isSmallScreen(screenWidth) ? (
-            step !== 0 ? null : (
-              <ChatSideBar
-                classes={classes}
-                selected={selected}
-                setSelected={setSelected}
-                setStep={setStep}
-              />
-            )
-          ) : (
-            <ChatSideBar
-              classes={classes}
-              selected={selected}
-              setSelected={setSelected}
-              setStep={setStep}
-            />
-          )}
-
-          {isSmallScreen(screenWidth) ? (
-            step !== 1 ? null : (
-              <ChatBody
-                selected={selected}
-                classes={classes}
-                rightDocOpen={openDoc}
-                smallScreen={isSmallScreen(screenWidth)}
-                setStep={setStep}
-              />
-            )
-          ) : (
-            <ChatBody
-              selected={selected}
-              classes={classes}
-              rightDocOpen={openDoc}
-              smallScreen={isSmallScreen(screenWidth)}
-              setStep={setStep}
-            />
-          )}
-
-          {isSmallScreen(screenWidth) ? (
-            step !== 2 ? null : (
-              <ChatDoc
-                classes={classes}
-                setStep={setStep}
-                smallScreen={isSmallScreen(screenWidth)}
-              />
-            )
-          ) : (
-            <ChatDoc
-              classes={classes}
-              setStep={setStep}
-              smallScreen={isSmallScreen(screenWidth)}
-            />
-          )}
-        </Fragment>
-      ) : (
-        <Fragment>
-          <Vc />
-          <ChatBody
-            selected={selected}
-            classes={classes}
-            rightDocOpen={openDoc}
-            smallScreen={isSmallScreen(screenWidth)}
-            setStep={setStep}
-          />
-        </Fragment>
-      )}
+      {VisibleChat}
     </div>
   );
 }
+
+//TODO To be used when vc is live
+
+// return (
+//   <div className={classes.root}>
+//     <CssBaseline />
+
+//     {!showVC ? (
+//       isSmallScreen ? (
+//         <MobileChat {...childProps} />
+//       ) : (
+//         <DesktopChat {...childProps} />
+//       )
+//     ) : (
+//       <Fragment>
+//         <Vc />
+//         <ChatBody
+//           selected={selected}
+//           classes={classes}
+//           rightDocOpen={openDoc}
+//           smallScreen={isSmallScreen}
+//           setStep={setStep}
+//         />
+//       </Fragment>
+//     )}
+//   </div>
+// );

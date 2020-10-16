@@ -1,3 +1,3 @@
-import ChatDoc from "./ChatDoc";
+import ChatDoc from "./ChatDocContainer";
 
 export default ChatDoc;

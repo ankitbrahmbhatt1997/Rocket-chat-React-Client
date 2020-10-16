@@ -1,21 +1,17 @@
-import React, { useState, useContext } from "react";
 import {
   Box,
-  TextField,
-  Button,
+  Icon,
   IconButton,
   makeStyles,
+  TextField,
   useTheme,
-  Icon,
 } from "@material-ui/core";
-import { sendMessage } from "utils/chatUtils";
 import { containerContext } from "components/Chat/ChatContainer";
-
 import { DropzoneDialog } from "material-ui-dropzone";
-import { typingIndicator } from "utils/chatUtils";
-import { useDispatch } from "react-redux";
+import React, { useContext, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { uploadFile } from "slices/groupSlice";
-import { useSelector } from "react-redux";
+import { sendMessage, typingIndicator } from "utils/chatUtils";
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -59,6 +55,7 @@ export default function InputBox({ groupId }) {
   let timer,
     timeoutVal = 1000;
 
+  // logic for sending typing indicator only when user stops typing
   const onKeyUp = () => {
     window.clearTimeout(timer); // prevent errant multiple timeouts from being generated
     timer = window.setTimeout(() => {
@@ -71,6 +68,14 @@ export default function InputBox({ groupId }) {
     typingIndicator(ws, groupId, username, true);
   };
 
+  // send messages on  Enter
+  const onKeyDown = (e) => {
+    if (e.key === "Enter") {
+      onSendClick();
+    }
+  };
+
+  // handler for file upload
   const onUploadClick = () => {
     setOpen(true);
   };
@@ -78,6 +83,7 @@ export default function InputBox({ groupId }) {
   const onChange = (e) => {
     setMessage(e.target.value);
   };
+
   const onSendClick = () => {
     sendMessage(ws, message, groupId);
     setMessage("");
@@ -99,6 +105,7 @@ export default function InputBox({ groupId }) {
             onChange={onChange}
             onKeyUp={onKeyUp}
             onKeyPress={onKeyPress}
+            onKeyDown={onKeyDown}
           />
         </Box>
         <IconButton onClick={onSendClick}>

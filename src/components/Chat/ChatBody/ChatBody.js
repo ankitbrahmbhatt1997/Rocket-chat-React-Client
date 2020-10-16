@@ -1,26 +1,17 @@
-import React, { useContext, Fragment } from "react";
-import {
-  makeStyles,
-  Box,
-  Typography,
-  Input,
-  IconButton,
-} from "@material-ui/core";
+import { Box, IconButton, makeStyles, Typography } from "@material-ui/core";
 import grey from "@material-ui/core/colors/grey";
-import Message from "components/Chat/Message";
-import InputBox from "components/Chat/InputBox";
-import ScrollTo from "components/Chat/ScrollTo";
+import PeopleAltOutlinedIcon from "@material-ui/icons/PeopleAltOutlined";
+import InputBox from "components/Chat/ChatBody/InputBox";
 import GroupDisplay from "components/Chat/GroupDisplay";
-import CustomizedAvatar from "components/Chat/Avatar";
-import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
-import VC from "components/Chat/Vc";
+import MembersDisplay from "components/Chat/MembersDisplay";
+import Message from "components/Chat/Message";
+import React from "react";
 
 const useStyles = makeStyles((theme) => {
   return {
     container: {
-      display: "flex",
       flexDirection: "column",
-
+      display: "flex",
       height: "100%",
     },
     header: {
@@ -58,6 +49,16 @@ export default function ChatBody({
 }) {
   const classes = useStyles();
 
+  const [open, setOpen] = React.useState(false);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
   return (
     <Box className={parentClasses.content}>
       <Box className={classes.container}>
@@ -83,20 +84,14 @@ export default function ChatBody({
             setStep={setStep}
           />
           <Box flexGrow={1}></Box>
-          <Box display="flex">
-            {!smallScreen &&
-              Object.keys(members).length > 0 &&
-              Object.keys(members).map((member) => {
-                return (
-                  <Fragment>
-                    <CustomizedAvatar
-                      value={members[member]["username"][0].toUpperCase()}
-                      key={member}
-                    />
-                    <Box width="0.2rem"></Box>
-                  </Fragment>
-                );
-              })}
+          <Box
+            display="flex"
+            onClick={handleOpen}
+            style={{ cursor: "pointer" }}
+          >
+            {!smallScreen && Object.keys(members).length > 0 && (
+              <PeopleAltOutlinedIcon fontSize="large" color="primary" />
+            )}
           </Box>
         </Box>
         <Box p="0 3rem" className={classes.messages} ref={messageContainer}>
@@ -120,6 +115,7 @@ export default function ChatBody({
           <InputBox groupId={group._id} />
         </Box>
       </Box>
+      <MembersDisplay members={members} open={open} handleClose={handleClose} />
     </Box>
   );
 }

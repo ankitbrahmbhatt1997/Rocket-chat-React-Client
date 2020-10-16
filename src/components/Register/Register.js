@@ -19,19 +19,6 @@ import * as Yup from "yup";
 import { registerUser } from "slices/authSlice";
 import { useDispatch } from "react-redux";
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © "}
-      <Link color="inherit" href="https://www.webnyay.in/">
-        Webnyay.in
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
-
 const RegisterSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
   username: Yup.string().required("username is required"),
