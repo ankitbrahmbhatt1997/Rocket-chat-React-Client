@@ -1,11 +1,11 @@
-import React from "react";
-import { useDispatch, useSelector, shallowEqual } from "react-redux";
-import { getFiles } from "slices/groupSlice";
-import { Box, Typography, makeStyles, Button } from "@material-ui/core";
+import { Box, Button, makeStyles, Typography } from "@material-ui/core";
 import PermMediaIcon from "@material-ui/icons/PermMedia";
+import { filterAudioFiles } from "components/Chat/ChatDoc/ChatDoc.utils";
+import React from "react";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
+import { getFiles } from "slices/groupSlice";
 // import { downloadDoc } from "utils/apituils";
 import useDeepCompareEffect from "use-deep-compare-effect";
-import { filterAudioFiles } from "components/Chat/ChatDoc/ChatDoc.utils";
 
 function truncate(str, n) {
   return str.length > n ? str.substr(0, n - 1) + "..." : str;
@@ -48,7 +48,7 @@ export default function Files({ handleOpen }) {
       <Box display="flex" className={classes.greyColor} p="0 0 0 1rem">
         <PermMediaIcon />
         <Box width="0.4rem"></Box>
-        <Typography variant="subtitle1">Shared Media</Typography>
+        <Typography variant="subtitle1">Group Media</Typography>
       </Box>
       <Box height="1rem"></Box>
       <Box className={classes.filesContainer}>

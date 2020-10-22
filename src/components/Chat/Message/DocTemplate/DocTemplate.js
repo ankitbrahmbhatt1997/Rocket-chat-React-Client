@@ -1,8 +1,8 @@
-import React from "react";
-import { Box, Typography, makeStyles } from "@material-ui/core";
+import { Box, makeStyles, Typography } from "@material-ui/core";
 import InsertDriveFileOutlinedIcon from "@material-ui/icons/InsertDriveFileOutlined";
-import { downloadDoc } from "utils/apiUtils";
 import Avatar from "components/Chat/Avatar";
+import React from "react";
+import { downloadDoc } from "utils/apiUtils";
 
 const useStyles = makeStyles((theme) => ({
   root: {

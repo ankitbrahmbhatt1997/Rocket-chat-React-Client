@@ -1,8 +1,21 @@
+import DocTemplate from "components/Chat/Message/DocTemplate";
+import RecievedMessage from "components/Chat/Message/RecievedMessage";
+import SentMessage from "components/Chat/Message/SentMessage";
+import { differenceInDays, format, isSameDay, subDays } from "date-fns";
 import React from "react";
-import SentMessage from "components/Chat/SentMessage";
-import RecievedMessage from "components/Chat/RecievedMessage";
-import DocTemplate from "components/Chat/DocTemplate";
 import { useSelector } from "react-redux";
+
+const getChatTime = (timestamp) => {
+  let currentDate = new Date();
+  if (isSameDay(currentDate, timestamp)) {
+    return format(timestamp, "h:mm aaaa");
+  } else if (isSameDay(subDays(currentDate, 1), timestamp)) {
+    return "yesterday";
+  } else {
+    return `${differenceInDays(currentDate, timestamp)} days ago`;
+    // return format(timestamp, "dd-MM-yyyy");
+  }
+};
 
 export default function Message({
   message: {
@@ -11,32 +24,44 @@ export default function Message({
     file,
     attachments,
     ts,
+    groupable = true,
   },
   domId,
 }) {
   const username = useSelector((state) => state.auth.user.username);
 
-  return (
-    <React.Fragment>
-      {username === from ? (
-        file ? (
-          <DocTemplate file={attachments[0]} domId={domId} />
-        ) : (
-          <SentMessage content={content} domId={domId} />
-        )
-      ) : file ? (
-        <DocTemplate
-          file={attachments[0]}
-          position="flex-start"
-          from={from}
-          domId={domId}
-        />
-      ) : (
-        <RecievedMessage content={content} from={from} domId={domId} />
-      )}
-    </React.Fragment>
-  );
-}
+  const parsedTimestamp = getChatTime(ts.$date);
 
-// domId={domId}
-// domId={domId}
+  // document sent
+  if (username === from && !groupable && file)
+    return <DocTemplate file={attachments[0]} domId={domId} />;
+  // text message sent
+  else if (username === from)
+    return (
+      <SentMessage
+        content={content}
+        domId={domId}
+        parsedTimestamp={parsedTimestamp}
+      />
+    );
+  // document recieved
+  else if (username !== from && !groupable && file)
+    return (
+      <DocTemplate
+        file={attachments[0]}
+        position="flex-start"
+        from={from}
+        domId={domId}
+      />
+    );
+  // text message recieved
+  else
+    return (
+      <RecievedMessage
+        content={content}
+        from={from}
+        domId={domId}
+        parsedTimestamp={parsedTimestamp}
+      />
+    );
+}

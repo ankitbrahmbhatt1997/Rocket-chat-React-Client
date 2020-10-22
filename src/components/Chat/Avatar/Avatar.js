@@ -1,24 +1,24 @@
-import React from "react";
+import { Badge, withStyles } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
-import { withStyles, Badge } from "@material-ui/core";
 import {
-  red,
-  green,
-  pink,
-  purple,
-  deepPurple,
-  indigo,
+  amber,
   blue,
-  lightBlue,
   cyan,
-  teal,
+  deepOrange,
+  deepPurple,
+  green,
+  indigo,
+  lightBlue,
   lightGreen,
   lime,
-  yellow,
-  amber,
   orange,
-  deepOrange,
+  pink,
+  purple,
+  red,
+  teal,
+  yellow,
 } from "@material-ui/core/colors";
+import React from "react";
 
 const colors = {
   A: red[500],
